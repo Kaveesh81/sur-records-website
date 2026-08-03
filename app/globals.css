@@ -1,0 +1,306 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   SUR RECORDS — DESIGN TOKENS  ("Modern Raga")
+   Dark-primary cinematic. Ink base, saffron as the single action colour,
+   indigo strictly as an atmospheric glow (it fails contrast as text).
+   ========================================================================== */
+
+@theme {
+  /* --- Surfaces --------------------------------------------------------- */
+  --color-ink: #0b0a0f; /* page background — deliberately not #000 (OLED smear) */
+  --color-ink-2: #131119; /* elevated surface / cards */
+  --color-ink-3: #1c1a25; /* hover surface */
+  --color-line: #2a2735; /* borders, dividers */
+
+  /* --- Foreground ------------------------------------------------------- */
+  --color-bone: #f5f0e8; /* primary text — 18.1:1 on ink */
+  --color-bone-muted: #a8a2b4; /* secondary text — 7.8:1 on ink */
+  /* Tertiary / metadata. Measured at 4.9:1 on ink — was #6f6a7d (3.8:1),
+     which failed WCAG AA on real content like release years. */
+  --color-bone-faint: #837d91;
+
+  /* --- Accents ---------------------------------------------------------- */
+  --color-saffron: #ff7a1a; /* primary action — 7.4:1 on ink */
+  --color-saffron-deep: #d9560a; /* pressed state */
+  --color-indigo: #3d2bff; /* GLOW ONLY — 2.7:1, never use for text */
+  --color-indigo-lift: #7c6bff; /* the text-safe indigo — 5.0:1 on ink */
+
+  /* --- Semantic --------------------------------------------------------- */
+  --color-danger: #ff5c5c;
+  --color-success: #4ade80;
+
+  /* --- Type ------------------------------------------------------------- */
+  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, monospace;
+  --font-deva: var(--font-deva), serif;
+
+  /* --- Motion tokens (one rhythm across the whole site) ------------------ */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --dur-fast: 180ms;
+  --dur-base: 280ms;
+  --dur-slow: 520ms;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  /* Lenis drives scrolling; native smooth-scroll would fight it. */
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-saffron);
+  color: var(--color-ink);
+}
+
+/* Visible focus for keyboard users only — never remove the ring outright. */
+:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Screen-reader-only utility (used for the skip link and form hints). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY HELPERS
+   ========================================================================== */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-bone-muted);
+}
+
+/* Tabular figures for the animated counters — stops width jitter mid-count. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ==========================================================================
+   AURORA BACKGROUND
+   Adapted from the Aceternity / 21st.dev "Aurora Background" hero.
+   Two counter-drifting repeating-linear-gradients, heavily blurred and
+   radially masked. Pure CSS — animates background-position only.
+   ========================================================================== */
+
+.aurora {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  /* Low opacity is doing the heavy lifting: the base colours below are
+     near-black, so this reads as coloured LIGHT falling on an ink stage
+     rather than a purple gradient wallpaper. */
+  opacity: 0.26;
+  filter: blur(72px) saturate(1.05);
+  background-image:
+    repeating-linear-gradient(
+      100deg,
+      var(--color-indigo) 6%,
+      transparent 15%,
+      transparent 32%,
+      var(--color-saffron) 42%
+    ),
+    repeating-linear-gradient(
+      100deg,
+      #0b0a0f 0%,
+      #150e28 20%,
+      #b8560f 40%,
+      #1d1552 62%,
+      #0b0a0f 84%
+    );
+  background-size: 280% 200%, 190% 190%;
+  background-position: 50% 50%, 50% 50%;
+  animation: aurora-drift 34s linear infinite;
+  /* Tight mask keeps the glow pooled near the lamp instead of flooding the fold. */
+  -webkit-mask-image: radial-gradient(ellipse 68% 48% at 50% 10%, #000 12%, transparent 72%);
+  mask-image: radial-gradient(ellipse 68% 48% at 50% 10%, #000 12%, transparent 72%);
+  will-change: background-position;
+}
+
+@keyframes aurora-drift {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+/* ==========================================================================
+   LAMP CONE
+   Adapted from the Aceternity / 21st.dev "Lamp Effect".
+   Two mirrored conic gradients form a cone of light, plus a hot filament
+   line at the apex. Scaled up by GSAP on load.
+   ========================================================================== */
+
+.lamp-cone {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: min(90rem, 160vw);
+  height: 26rem;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    conic-gradient(from 90deg at 50% 0%, transparent 0deg, var(--color-saffron) 12deg, transparent 34deg),
+    conic-gradient(from 270deg at 50% 0%, transparent 326deg, var(--color-indigo) 348deg, transparent 360deg);
+  filter: blur(52px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 88%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 88%);
+}
+
+.lamp-filament {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  height: 2px;
+  width: min(34rem, 70vw);
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-saffron) 30%,
+    #fff2e2 50%,
+    var(--color-saffron) 70%,
+    transparent
+  );
+  filter: blur(2px);
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   FILM GRAIN
+   A tiled SVG feTurbulence. Sits above everything at very low opacity to
+   knock the digital sheen off the gradients — the "cinematic" half of the
+   brief. Fixed so it never scrolls with content.
+   ========================================================================== */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   NOISE / VIGNETTE for generated cover art
+   Gives procedurally generated artwork a printed texture so the placeholder
+   covers read as intentional design rather than a missing image.
+   ========================================================================== */
+
+.art-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   MARQUEE
+   Duplicated track translated -50%; the copy makes the loop seamless.
+   ========================================================================== */
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ==========================================================================
+   SCROLL-REVEAL FALLBACK
+   Elements start hidden only when JS is available to bring them back.
+   Without JS the `no-js` guard leaves all content visible and crawlable.
+   ========================================================================== */
+
+.js .reveal {
+  opacity: 0;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Kill every ambient loop and reveal. Content must be fully readable and
+   fully visible the instant the page loads.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .aurora,
+  .marquee-track {
+    animation: none !important;
+  }
+
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
