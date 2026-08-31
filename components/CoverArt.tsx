@@ -33,10 +33,14 @@ export default function CoverArt({
     );
   }
 
-  // The second light pool is always pulled back to a brand anchor — saffron
-  // for cool base hues, indigo for warm ones. A mechanical complement
-  // (hue + 210) produced off-brand limes and teals that broke the set.
-  const partner = hue < 180 ? 250 : 25;
+  // `hue` arrives as a 0–360 brand-differentiator seed from content.ts, but
+  // the site is strictly black-and-gold now — so it is remapped into a
+  // narrow amber-gold band (deterministic per seed) rather than used as a
+  // literal hue. Every cover reads as one gilded catalogue, not a rainbow.
+  const seed = ((hue % 360) + 360) % 360;
+  const goldHue = 36 + (seed % 5) * 4; // 36–52°: amber through warm gold
+  const sat = 58 + (seed % 3) * 7; // 58–72%
+  const partnerHue = goldHue - 10;
 
   return (
     <div
@@ -44,9 +48,9 @@ export default function CoverArt({
       className={`art-noise relative h-full w-full overflow-hidden ${className}`}
       style={{
         backgroundImage: `
-          radial-gradient(ellipse 80% 60% at 30% 15%, hsl(${hue} 88% 56% / 0.8), transparent 62%),
-          radial-gradient(ellipse 70% 70% at 78% 82%, hsl(${partner} 72% 46% / 0.6), transparent 60%),
-          linear-gradient(155deg, hsl(${hue} 38% 11%), hsl(${partner} 45% 5%))
+          radial-gradient(ellipse 80% 60% at 30% 15%, hsl(${goldHue} ${sat}% 52% / 0.55), transparent 62%),
+          radial-gradient(ellipse 70% 70% at 78% 82%, hsl(${partnerHue} ${sat - 12}% 28% / 0.55), transparent 60%),
+          linear-gradient(155deg, hsl(${goldHue} 32% 8%), #0a0908)
         `,
       }}
     >

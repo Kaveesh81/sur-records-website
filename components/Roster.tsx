@@ -13,11 +13,11 @@ export default function Roster() {
         <Reveal className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="label-mono mb-5 flex items-center gap-3">
-              <span className="h-px w-8 bg-saffron" />
+              <span className="h-px w-8 bg-gold" />
               The roster
             </p>
             <h2 className="display max-w-xl text-balance text-[clamp(2rem,5.5vw,4rem)]">
-              The people making <span className="italic text-saffron">the noise</span>
+              The people making <span className="italic text-gold">the noise</span>
             </h2>
           </div>
 

@@ -58,7 +58,7 @@ export default function Proof() {
               <span data-count={s.value} aria-hidden="true" className="tabular">
                 {s.value}
               </span>
-              <span aria-hidden="true" className="text-saffron">
+              <span aria-hidden="true" className="text-gold">
                 {s.suffix}
               </span>
               <span className="sr-only">

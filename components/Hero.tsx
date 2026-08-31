@@ -67,11 +67,11 @@ export default function Hero() {
           m.x = Math.random() * cv.width;
         }
 
-        // Twinkle, biased warm to sit inside the saffron light.
+        // Twinkle, biased warm to sit inside the gold light — gilded dust.
         const alpha = m.a * (0.55 + 0.45 * Math.sin(m.tw));
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 226, 196, ${alpha})`;
+        ctx.fillStyle = `rgba(240, 199, 94, ${alpha})`;
         ctx.fill();
       }
 
@@ -210,7 +210,7 @@ export default function Hero() {
       {/* ---- Foreground ----------------------------------------------- */}
       <div data-parallax="fore" className="relative z-10 mx-auto max-w-5xl text-center">
         <p data-anim="eyebrow" className="label-mono mb-8">
-          <span className="mr-3 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-saffron align-middle" />
+          <span className="mr-3 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-gold align-middle" />
           {hero.eyebrow}
         </p>
 
@@ -219,7 +219,7 @@ export default function Hero() {
             <span key={i} className="block overflow-hidden pb-[0.08em]">
               <span
                 data-headline-line
-                className={`block ${i === 1 ? "italic text-saffron" : ""}`}
+                className={`block ${i === 1 ? "italic text-gold" : ""}`}
               >
                 {line}
               </span>
@@ -238,7 +238,7 @@ export default function Hero() {
           <a
             data-anim="cta"
             href={hero.primaryCta.href}
-            className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-saffron px-8 text-sm font-semibold text-ink transition-[background-color,transform] duration-[--dur-base] ease-[--ease-out-quart] hover:bg-[#ff8f3d] active:scale-[0.98] sm:w-auto"
+            className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gold px-8 text-sm font-semibold text-ink transition-[background-color,transform] duration-[--dur-base] ease-[--ease-out-quart] hover:bg-[#f0c75e] active:scale-[0.98] sm:w-auto"
           >
             {hero.primaryCta.label}
             <ArrowUpRight

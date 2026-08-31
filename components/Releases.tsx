@@ -79,11 +79,11 @@ export default function Releases() {
         {/* Heading */}
         <div className="mx-auto w-full max-w-7xl shrink-0 px-6 pb-6 md:pb-6">
           <p className="label-mono mb-5 flex items-center gap-3">
-            <span className="h-px w-8 bg-saffron" />
+            <span className="h-px w-8 bg-gold" />
             Selected work
           </p>
           <h2 className="display max-w-2xl text-balance text-[clamp(1.85rem,4.4vw,3.25rem)]">
-            Records we have <span className="italic text-saffron">put our name on</span>
+            Records we have <span className="italic text-gold">put our name on</span>
           </h2>
         </div>
 

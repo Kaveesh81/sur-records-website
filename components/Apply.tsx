@@ -101,7 +101,7 @@ export default function Apply() {
     return (
       <section id="apply" className="scroll-mt-24 px-6 py-28 md:py-36">
         <div className="mx-auto max-w-xl text-center">
-          <span className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-saffron/40 bg-saffron/10 text-saffron">
+          <span className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold">
             <Check size={26} strokeWidth={2.2} />
           </span>
 
@@ -135,7 +135,7 @@ export default function Apply() {
         className="pointer-events-none absolute left-1/2 top-1/4 h-[30rem] w-[50rem] max-w-[130vw] -translate-x-1/2 rounded-full opacity-[0.13] blur-[130px]"
         style={{
           background:
-            "radial-gradient(circle, var(--color-saffron) 0%, transparent 68%)",
+            "radial-gradient(circle, var(--color-gold) 0%, transparent 68%)",
         }}
       />
 
@@ -143,7 +143,7 @@ export default function Apply() {
         {/* Pitch column */}
         <Reveal>
           <p className="label-mono mb-5 flex items-center gap-3">
-            <span className="h-px w-8 bg-saffron" />
+            <span className="h-px w-8 bg-gold" />
             {apply.label}
           </p>
 
@@ -161,7 +161,7 @@ export default function Apply() {
               <dd className="mt-1.5">
                 <a
                   href={`mailto:${site.email}`}
-                  className="group inline-flex min-h-11 items-center gap-1.5 text-bone transition-colors duration-[--dur-base] hover:text-saffron"
+                  className="group inline-flex min-h-11 items-center gap-1.5 text-bone transition-colors duration-[--dur-base] hover:text-gold"
                 >
                   {site.email}
                   <ArrowUpRight
@@ -233,7 +233,7 @@ export default function Apply() {
             {/* Role */}
             <div>
               <label htmlFor="role" className="mb-2 block text-sm font-medium text-bone">
-                What do you do? <span className="text-saffron">*</span>
+                What do you do? <span className="text-gold">*</span>
               </label>
 
               <select
@@ -245,7 +245,7 @@ export default function Apply() {
                 onBlur={validateField("role")}
                 aria-invalid={!!errors.role}
                 aria-describedby={errors.role ? "role-error" : undefined}
-                className={`min-h-12 w-full appearance-none rounded-lg border bg-ink px-4 text-base text-bone outline-none transition-colors duration-[--dur-base] focus:border-saffron ${
+                className={`min-h-12 w-full appearance-none rounded-lg border bg-ink px-4 text-base text-bone outline-none transition-colors duration-[--dur-base] focus:border-gold ${
                   errors.role ? "border-danger" : "border-line hover:border-bone/25"
                 }`}
                 style={{
@@ -311,7 +311,7 @@ export default function Apply() {
                 aria-invalid={!!errors.message}
                 aria-describedby={errors.message ? "message-error" : undefined}
                 placeholder="Tell us what you are working on, who you listen to, what you want from a label."
-                className={`w-full resize-y rounded-lg border bg-ink px-4 py-3 text-base leading-relaxed text-bone outline-none transition-colors duration-[--dur-base] placeholder:text-bone-faint focus:border-saffron ${
+                className={`w-full resize-y rounded-lg border bg-ink px-4 py-3 text-base leading-relaxed text-bone outline-none transition-colors duration-[--dur-base] placeholder:text-bone-faint focus:border-gold ${
                   errors.message ? "border-danger" : "border-line hover:border-bone/25"
                 }`}
               />
@@ -349,7 +349,7 @@ export default function Apply() {
             <button
               type="submit"
               disabled={status === "submitting"}
-              className="inline-flex min-h-13 w-full items-center justify-center gap-2.5 rounded-full bg-saffron px-8 text-sm font-semibold text-ink transition-[background-color,transform,opacity] duration-[--dur-base] ease-[--ease-out-quart] hover:bg-[#ff8f3d] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-13 w-full items-center justify-center gap-2.5 rounded-full bg-gold px-8 text-sm font-semibold text-ink transition-[background-color,transform,opacity] duration-[--dur-base] ease-[--ease-out-quart] hover:bg-[#f0c75e] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === "submitting" ? (
                 <>
@@ -425,7 +425,7 @@ function Field({
       <label htmlFor={name} className="mb-2 block text-sm font-medium text-bone">
         {label}{" "}
         {required ? (
-          <span className="text-saffron" aria-hidden="true">
+          <span className="text-gold" aria-hidden="true">
             *
           </span>
         ) : (
@@ -443,7 +443,7 @@ function Field({
         onBlur={onBlur}
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
-        className={`min-h-12 w-full rounded-lg border bg-ink px-4 text-base text-bone outline-none transition-colors duration-[--dur-base] placeholder:text-bone-faint focus:border-saffron ${
+        className={`min-h-12 w-full rounded-lg border bg-ink px-4 text-base text-bone outline-none transition-colors duration-[--dur-base] placeholder:text-bone-faint focus:border-gold ${
           error ? "border-danger" : "border-line hover:border-bone/25"
         }`}
         {...rest}

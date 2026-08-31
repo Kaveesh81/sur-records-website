@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-baseline gap-2.5">
-              <span className="font-deva text-2xl leading-none text-saffron">
+              <span className="font-deva text-2xl leading-none text-gold">
                 {site.nameDevanagari}
               </span>
               <span className="display text-xl">{site.name}</span>
@@ -38,7 +38,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#apply"
-                  className="inline-flex min-h-11 items-center text-sm text-saffron transition-colors duration-[--dur-base] hover:text-[#ff8f3d]"
+                  className="inline-flex min-h-11 items-center text-sm text-gold transition-colors duration-[--dur-base] hover:text-[#f0c75e]"
                 >
                   Be part of the label
                 </a>

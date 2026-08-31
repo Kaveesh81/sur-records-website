@@ -69,7 +69,7 @@ export default function Manifesto() {
     >
       <div className="mx-auto w-full max-w-4xl">
         <p className="label-mono mb-10 flex items-center gap-3">
-          <span className="h-px w-8 bg-saffron" />
+          <span className="h-px w-8 bg-gold" />
           {manifesto.label}
         </p>
 

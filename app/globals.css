@@ -1,30 +1,29 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   SUR RECORDS — DESIGN TOKENS  ("Modern Raga")
-   Dark-primary cinematic. Ink base, saffron as the single action colour,
-   indigo strictly as an atmospheric glow (it fails contrast as text).
+   SUR RECORDS — DESIGN TOKENS  ("Gilded Ink")
+   Dark-primary cinematic. Near-black base, gold as the single action colour,
+   bronze strictly as an atmospheric glow (it fails contrast as text).
    ========================================================================== */
 
 @theme {
   /* --- Surfaces --------------------------------------------------------- */
-  --color-ink: #0b0a0f; /* page background — deliberately not #000 (OLED smear) */
-  --color-ink-2: #131119; /* elevated surface / cards */
-  --color-ink-3: #1c1a25; /* hover surface */
-  --color-line: #2a2735; /* borders, dividers */
+  --color-ink: #0a0908; /* page background — warm near-black, deliberately not #000 (OLED smear) */
+  --color-ink-2: #14120d; /* elevated surface / cards */
+  --color-ink-3: #1e1a15; /* hover surface */
+  --color-line: #2e2a20; /* borders, dividers */
 
   /* --- Foreground ------------------------------------------------------- */
-  --color-bone: #f5f0e8; /* primary text — 18.1:1 on ink */
-  --color-bone-muted: #a8a2b4; /* secondary text — 7.8:1 on ink */
-  /* Tertiary / metadata. Measured at 4.9:1 on ink — was #6f6a7d (3.8:1),
-     which failed WCAG AA on real content like release years. */
-  --color-bone-faint: #837d91;
+  --color-bone: #f5f0e8; /* primary text — 17.5:1 on ink */
+  --color-bone-muted: #b8ad92; /* secondary text — 8.9:1 on ink */
+  /* Tertiary / metadata. Measured at 5.4:1 on ink. */
+  --color-bone-faint: #8f8468;
 
   /* --- Accents ---------------------------------------------------------- */
-  --color-saffron: #ff7a1a; /* primary action — 7.4:1 on ink */
-  --color-saffron-deep: #d9560a; /* pressed state */
-  --color-indigo: #3d2bff; /* GLOW ONLY — 2.7:1, never use for text */
-  --color-indigo-lift: #7c6bff; /* the text-safe indigo — 5.0:1 on ink */
+  --color-gold: #d4af37; /* primary action — 9.5:1 on ink */
+  --color-gold-deep: #a8801c; /* pressed state */
+  --color-gold-bright: #f0c75e; /* hover-lightened state */
+  --color-bronze: #7a5a20; /* GLOW ONLY — 3.1:1, never use for text */
 
   /* --- Semantic --------------------------------------------------------- */
   --color-danger: #ff5c5c;
@@ -69,13 +68,13 @@ body {
 }
 
 ::selection {
-  background: var(--color-saffron);
+  background: var(--color-gold);
   color: var(--color-ink);
 }
 
 /* Visible focus for keyboard users only — never remove the ring outright. */
 :focus-visible {
-  outline: 2px solid var(--color-saffron);
+  outline: 2px solid var(--color-gold);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -130,25 +129,25 @@ body {
   inset: -50%;
   pointer-events: none;
   /* Low opacity is doing the heavy lifting: the base colours below are
-     near-black, so this reads as coloured LIGHT falling on an ink stage
-     rather than a purple gradient wallpaper. */
+     near-black, so this reads as gilded LIGHT falling on an ink stage
+     rather than a flat gold gradient wallpaper. */
   opacity: 0.26;
   filter: blur(72px) saturate(1.05);
   background-image:
     repeating-linear-gradient(
       100deg,
-      var(--color-indigo) 6%,
+      var(--color-bronze) 6%,
       transparent 15%,
       transparent 32%,
-      var(--color-saffron) 42%
+      var(--color-gold) 42%
     ),
     repeating-linear-gradient(
       100deg,
-      #0b0a0f 0%,
-      #150e28 20%,
-      #b8560f 40%,
-      #1d1552 62%,
-      #0b0a0f 84%
+      #0a0908 0%,
+      #1c1508 20%,
+      #4a3410 40%,
+      #171208 62%,
+      #0a0908 84%
     );
   background-size: 280% 200%, 190% 190%;
   background-position: 50% 50%, 50% 50%;
@@ -185,8 +184,8 @@ body {
   pointer-events: none;
   opacity: 0.55;
   background:
-    conic-gradient(from 90deg at 50% 0%, transparent 0deg, var(--color-saffron) 12deg, transparent 34deg),
-    conic-gradient(from 270deg at 50% 0%, transparent 326deg, var(--color-indigo) 348deg, transparent 360deg);
+    conic-gradient(from 90deg at 50% 0%, transparent 0deg, var(--color-gold) 12deg, transparent 34deg),
+    conic-gradient(from 270deg at 50% 0%, transparent 326deg, var(--color-bronze) 348deg, transparent 360deg);
   filter: blur(52px);
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 88%);
   mask-image: linear-gradient(to bottom, #000 0%, transparent 88%);
@@ -202,9 +201,9 @@ body {
   background: linear-gradient(
     to right,
     transparent,
-    var(--color-saffron) 30%,
-    #fff2e2 50%,
-    var(--color-saffron) 70%,
+    var(--color-gold) 30%,
+    #fff8ec 50%,
+    var(--color-gold) 70%,
     transparent
   );
   filter: blur(2px);

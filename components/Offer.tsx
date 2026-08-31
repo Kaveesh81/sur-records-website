@@ -30,14 +30,14 @@ export default function Offer() {
         className="pointer-events-none absolute left-1/2 top-0 h-[34rem] w-[64rem] max-w-[140vw] -translate-x-1/2 rounded-full opacity-[0.16] blur-[120px]"
         style={{
           background:
-            "radial-gradient(circle, var(--color-saffron) 0%, var(--color-indigo) 55%, transparent 72%)",
+            "radial-gradient(circle, var(--color-gold) 0%, var(--color-bronze) 55%, transparent 72%)",
         }}
       />
 
       <div className="relative mx-auto max-w-7xl">
         <Reveal className="mb-16 max-w-3xl">
           <p className="label-mono mb-5 flex items-center gap-3">
-            <span className="h-px w-8 bg-saffron" />
+            <span className="h-px w-8 bg-gold" />
             {offer.label}
           </p>
           <h2 className="display text-balance text-[clamp(2rem,5.5vw,4rem)]">
@@ -54,7 +54,7 @@ export default function Offer() {
                 key={item.title}
                 className="group bg-ink p-7 transition-colors duration-[--dur-base] hover:bg-ink-2 md:p-9"
               >
-                <span className="mb-6 flex h-11 w-11 items-center justify-center rounded-full border border-line bg-ink-2 text-saffron transition-colors duration-[--dur-base] group-hover:border-saffron/40">
+                <span className="mb-6 flex h-11 w-11 items-center justify-center rounded-full border border-line bg-ink-2 text-gold transition-colors duration-[--dur-base] group-hover:border-gold/40">
                   <Icon size={19} strokeWidth={1.6} aria-hidden="true" />
                 </span>
 

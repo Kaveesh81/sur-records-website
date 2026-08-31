@@ -151,8 +151,8 @@ visible without JavaScript so crawlers index them.
 
 - Contrast verified against WCAG AA across every text node in both the mobile
   and desktop renders.
-- `--color-indigo` is **glow only** — it measures 2.7:1 on ink and must never be
-  used for text. Use `--color-indigo-lift` (5.0:1) if you need indigo type.
+- `--color-bronze` is **glow only** — it measures 3.1:1 on ink and must never be
+  used for text. Use `--color-gold` (9.5:1) for any gold-family text.
 - All tap targets are ≥44px; form has visible labels, inline validation on blur,
   `role="alert"` errors, and focus moves to the first invalid field on submit.
 - Skip link, keyboard-visible focus rings, and `Escape` closes the mobile menu.

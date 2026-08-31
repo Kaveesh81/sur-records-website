@@ -25,7 +25,7 @@ export default function Ticker() {
               <span className="display px-7 text-2xl text-bone-muted sm:text-3xl">
                 {word}
               </span>
-              <span className="h-1 w-1 shrink-0 rounded-full bg-saffron" />
+              <span className="h-1 w-1 shrink-0 rounded-full bg-gold" />
             </span>
           ))}
         </div>

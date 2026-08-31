@@ -52,7 +52,7 @@ export default function Nav() {
             className="group flex min-h-11 items-baseline gap-2.5 py-3"
             aria-label={`${site.name} — home`}
           >
-            <span className="font-deva text-xl leading-none text-saffron transition-transform duration-[--dur-base] ease-[--ease-out-quart] group-hover:-translate-y-px">
+            <span className="font-deva text-xl leading-none text-gold transition-transform duration-[--dur-base] ease-[--ease-out-quart] group-hover:-translate-y-px">
               {site.nameDevanagari}
             </span>
             <span className="display text-lg tracking-tight">{site.name}</span>
@@ -64,7 +64,7 @@ export default function Nav() {
               <a
                 key={item.href}
                 href={item.href}
-                className="relative text-sm text-bone-muted transition-colors duration-[--dur-base] hover:text-bone after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-saffron after:transition-[width] after:duration-[--dur-base] after:ease-[--ease-out-quart] hover:after:w-full"
+                className="relative text-sm text-bone-muted transition-colors duration-[--dur-base] hover:text-bone after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-[width] after:duration-[--dur-base] after:ease-[--ease-out-quart] hover:after:w-full"
               >
                 {item.label}
               </a>
@@ -108,7 +108,7 @@ export default function Nav() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="display flex min-h-14 items-center px-6 text-4xl text-bone transition-colors duration-[--dur-base] hover:text-saffron"
+              className="display flex min-h-14 items-center px-6 text-4xl text-bone transition-colors duration-[--dur-base] hover:text-gold"
             >
               {item.label}
             </a>
@@ -117,7 +117,7 @@ export default function Nav() {
           <a
             href="#apply"
             onClick={() => setOpen(false)}
-            className="mt-8 inline-flex min-h-12 items-center rounded-full bg-saffron px-9 text-sm font-semibold text-ink"
+            className="mt-8 inline-flex min-h-12 items-center rounded-full bg-gold px-9 text-sm font-semibold text-ink"
           >
             Be part of the label
           </a>
