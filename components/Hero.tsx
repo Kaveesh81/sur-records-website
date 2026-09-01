@@ -2,21 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { hero, site } from "@/lib/content";
-import { registerGsap, prefersReducedMotion, splitChars, EASE } from "@/lib/motion";
+import { registerGsap, prefersReducedMotion, EASE } from "@/lib/motion";
 
 /**
  * HERO
  *
- * Composites three effects from the 21st.dev / Aceternity hero family,
- * re-implemented in CSS + GSAP against the Sur palette:
- *   · Aurora Background — drifting masked gradient field   (.aurora)
- *   · Lamp Effect       — conic light cone + filament      (.lamp-cone)
- *   · Sparkles          — canvas dust motes                (this file)
+ * Brand-first: the name "Sur Records" is the content, centered both axes,
+ * until real logo/branding assets exist (`hero.logoSrc` overrides the
+ * generated lockup below once they do).
  *
- * On top: a per-character kinetic headline and a scroll-scrubbed parallax
- * that sinks the whole composition as you leave the fold.
+ * Still composites the same ambient layers as before — Aurora Background,
+ * Lamp Effect, canvas Sparkles — re-implemented in CSS + GSAP.
  */
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -42,7 +41,6 @@ export default function Hero() {
       cv.width = cv.offsetWidth * dpr;
       cv.height = cv.offsetHeight * dpr;
 
-      // Scale count with area so a phone doesn't render desktop density.
       const count = Math.round((cv.offsetWidth * cv.offsetHeight) / 14000);
 
       motes = Array.from({ length: count }, () => ({
@@ -111,45 +109,15 @@ export default function Hero() {
     }
 
     const ctx = gsap.context(() => {
-      // Split every headline line into characters up front.
-      const lines = gsap.utils.toArray<HTMLElement>("[data-headline-line]");
-      const perLine = lines.map((line) => splitChars(line));
-
       const tl = gsap.timeline({ defaults: { ease: EASE.out } });
 
-      // 1 — the lamp strikes.
       tl.from(".lamp-filament", { scaleX: 0, opacity: 0, duration: 1.1 }, 0)
         .from(".lamp-cone", { opacity: 0, scaleY: 0.5, duration: 1.4 }, 0.08)
         .from(".aurora", { opacity: 0, duration: 1.8 }, 0)
-
-        // 2 — eyebrow.
-        .from("[data-anim='eyebrow']", { opacity: 0, y: 14, duration: 0.7 }, 0.45)
-
-        // 3 — headline, character by character, line after line.
-        .add(() => {}, 0.6);
-
-      perLine.forEach((chars, i) => {
-        tl.from(
-          chars,
-          {
-            opacity: 0,
-            yPercent: 110,
-            rotateX: -55,
-            duration: 0.85,
-            stagger: 0.016,
-            ease: EASE.out,
-          },
-          0.6 + i * 0.11
-        );
-      });
-
-      // 4 — the Devanagari watermark breathes in behind everything.
-      tl.from("[data-anim='glyph']", { opacity: 0, scale: 0.86, duration: 1.6 }, 0.5)
-
-        // 5 — supporting copy and actions.
-        .from("[data-anim='sub']", { opacity: 0, y: 18, duration: 0.75 }, 1.15)
-        .from("[data-anim='cta']", { opacity: 0, y: 18, duration: 0.7, stagger: 0.09 }, 1.28)
-        .from("[data-anim='scrollcue']", { opacity: 0, duration: 0.7 }, 1.6);
+        .from("[data-anim='wordmark']", { opacity: 0, y: 24, duration: 0.9 }, 0.4)
+        .from("[data-anim='tagline']", { opacity: 0, y: 16, duration: 0.75 }, 0.95)
+        .from("[data-anim='cta']", { opacity: 0, y: 18, duration: 0.7, stagger: 0.09 }, 1.1)
+        .from("[data-anim='scrollcue']", { opacity: 0, duration: 0.7 }, 1.45);
 
       // Parallax out: content sinks and fades, background drifts slower.
       gsap.to("[data-parallax='fore']", {
@@ -194,48 +162,49 @@ export default function Hero() {
           className="absolute inset-0 h-full w-full"
           aria-hidden="true"
         />
-        {/* Grounds the composition — stops the aurora bleeding into the next section. */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      {/* ---- Devanagari watermark ------------------------------------- */}
-      <span
-        data-anim="glyph"
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[56%] select-none font-deva text-[38vw] leading-none text-bone/[0.028] md:text-[26vw]"
-      >
-        {site.nameDevanagari}
-      </span>
+      {/* ---- Foreground: the brand itself ------------------------------ */}
+      <div data-parallax="fore" className="relative z-10 mx-auto max-w-4xl text-center">
+        {/* Watermark is centered on the headline specifically (not the
+            section), so it always sits directly behind "Sur Records"
+            regardless of how much space the tagline/CTAs need below. */}
+        <div className="relative mx-auto mt-10 sm:mt-16">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-deva text-[42vw] leading-none text-bone/[0.078] md:text-[30vw]"
+          >
+            {site.nameDevanagari}
+          </span>
 
-      {/* ---- Foreground ----------------------------------------------- */}
-      <div data-parallax="fore" className="relative z-10 mx-auto max-w-5xl text-center">
-        <p data-anim="eyebrow" className="label-mono mb-8">
-          <span className="mr-3 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-gold align-middle" />
-          {hero.eyebrow}
-        </p>
-
-        <h1 className="display text-balance text-[clamp(2.5rem,7.4vw,6rem)]">
-          {hero.headline.map((line, i) => (
-            <span key={i} className="block overflow-hidden pb-[0.08em]">
-              <span
-                data-headline-line
-                className={`block ${i === 1 ? "italic text-gold" : ""}`}
-              >
-                {line}
-              </span>
-            </span>
-          ))}
-        </h1>
+          {hero.logoSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              data-anim="wordmark"
+              src={hero.logoSrc}
+              alt={site.name}
+              className="relative mx-auto h-auto w-full max-w-md"
+            />
+          ) : (
+            <h1
+              data-anim="wordmark"
+              className="relative display text-balance text-[clamp(3.25rem,12vw,8.5rem)] leading-[0.96]"
+            >
+              {site.name}
+            </h1>
+          )}
+        </div>
 
         <p
-          data-anim="sub"
-          className="mx-auto mt-7 max-w-xl text-pretty text-base leading-relaxed text-bone-muted sm:text-lg"
+          data-anim="tagline"
+          className="mx-auto mt-24 max-w-lg text-pretty text-base leading-relaxed text-bone-muted sm:mt-32 sm:text-lg"
         >
-          {hero.sub}
+          {site.tagline}
         </p>
 
         <div className="mt-9 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
-          <a
+          <Link
             data-anim="cta"
             href={hero.primaryCta.href}
             className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gold px-8 text-sm font-semibold text-ink transition-[background-color,transform] duration-[--dur-base] ease-[--ease-out-quart] hover:bg-[#f0c75e] active:scale-[0.98] sm:w-auto"
@@ -246,15 +215,15 @@ export default function Hero() {
               strokeWidth={2.5}
               className="transition-transform duration-[--dur-base] ease-[--ease-out-quart] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
-          </a>
+          </Link>
 
-          <a
+          <Link
             data-anim="cta"
             href={hero.secondaryCta.href}
             className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-line bg-bone/[0.03] px-8 text-sm font-medium text-bone backdrop-blur-sm transition-colors duration-[--dur-base] hover:border-bone/25 hover:bg-bone/[0.07] sm:w-auto"
           >
             {hero.secondaryCta.label}
-          </a>
+          </Link>
         </div>
       </div>
 

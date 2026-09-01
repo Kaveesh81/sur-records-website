@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, JetBrains_Mono, Noto_Serif_Devanagari } from "next/font/google";
 import { site } from "@/lib/content";
 import SmoothScroll from "@/components/SmoothScroll";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import MusicPlayer from "@/components/MusicPlayer";
+import { PlayerProvider } from "@/lib/player-context";
 import "./globals.css";
 
 /**
@@ -102,7 +106,17 @@ export default function RootLayout({
         </a>
 
         <SmoothScroll />
-        {children}
+
+        <PlayerProvider>
+          <Nav />
+          <main id="main">{children}</main>
+          {/* pb reserves space for the fixed MusicPlayer bar below so it
+              never overlaps the footer's own content. */}
+          <div className="pb-[4.75rem] sm:pb-[5.25rem]">
+            <Footer />
+          </div>
+          <MusicPlayer />
+        </PlayerProvider>
 
         {/* Film grain sits above everything, pointer-events: none. */}
         <div className="grain" aria-hidden="true" />

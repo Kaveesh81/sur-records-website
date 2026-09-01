@@ -1,94 +1,62 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
 import { manifesto } from "@/lib/content";
-import { registerGsap, prefersReducedMotion } from "@/lib/motion";
+import Reveal from "./Reveal";
+
+// Called out in gold within the closing signature line; the rest stays white.
+const SIGNATURE_HIGHLIGHT = "For the artists who have something to say";
+
+function renderSignature(text: string) {
+  const idx = text.indexOf(SIGNATURE_HIGHLIGHT);
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="text-gold">{text.slice(idx, idx + SIGNATURE_HIGHLIGHT.length)}</span>
+      {text.slice(idx + SIGNATURE_HIGHLIGHT.length)}
+    </>
+  );
+}
 
 /**
- * MANIFESTO
- *
- * The signature scroll moment: each word lifts from dim to full brightness
- * as the section is scrubbed through, so reading pace is tied to scroll pace.
- *
- * Desktop pins the section (one of only two pins on the page — see Releases).
- * Mobile skips the pin: pinning fights native momentum scroll and is the
- * single most common cause of janky scroll on mid-tier phones.
+ * MANIFESTO — the brand statement, staggered in as the visitor scrolls
+ * through it via the shared `Reveal` primitive (the old per-word scroll-scrub
+ * only worked for a single paragraph; this copy has several distinct beats).
  */
 export default function Manifesto() {
-  const root = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = root.current;
-    if (!el) return;
-
-    registerGsap();
-
-    if (prefersReducedMotion()) {
-      gsap.set(el.querySelectorAll("[data-word]"), { opacity: 1 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      const build = (pin: boolean) => () => {
-        gsap.fromTo(
-          "[data-word]",
-          { opacity: 0.14 },
-          {
-            opacity: 1,
-            ease: "none",
-            stagger: 0.5,
-            scrollTrigger: {
-              trigger: el,
-              start: pin ? "top top" : "top 78%",
-              end: pin ? "+=120%" : "bottom 55%",
-              scrub: 0.5,
-              pin,
-              anticipatePin: pin ? 1 : 0,
-            },
-          }
-        );
-      };
-
-      mm.add("(min-width: 768px)", build(true));
-      mm.add("(max-width: 767px)", build(false));
-    }, el);
-
-    return () => ctx.revert();
-  }, []);
-
-  const words = manifesto.body.split(" ");
-
   return (
-    <section
-      ref={root}
-      id="manifesto"
-      className="relative flex min-h-[70svh] items-center px-6 py-28 md:min-h-svh md:py-36"
-    >
-      <div className="mx-auto w-full max-w-4xl">
-        <p className="label-mono mb-10 flex items-center gap-3">
-          <span className="h-px w-8 bg-gold" />
-          {manifesto.label}
-        </p>
+    <section id="manifesto" className="relative px-6 py-28 md:py-36">
+      <div className="mx-auto max-w-3xl rounded-[2rem] border border-gold/40 bg-gold/[0.04] px-6 py-12 text-center sm:px-14 sm:py-16">
+        <Reveal>
+          <p className="label-mono mb-8 flex items-center justify-center gap-3 !text-[clamp(1.75rem,5vw,3.25rem)]">
+            <span className="h-px w-10 bg-gold" />
+            {manifesto.label}
+          </p>
+          <p className="display text-pretty text-xl leading-relaxed text-bone sm:text-2xl">
+            {manifesto.lead}
+          </p>
+        </Reveal>
 
-        {/*
-          The paragraph carries the full sentence for assistive tech; the
-          per-word spans are decorative brightness targets only.
-        */}
-        <p
-          className="display text-balance text-[clamp(1.75rem,4.4vw,3.5rem)] leading-[1.18]"
-          aria-label={manifesto.body}
-        >
-          {words.map((word, i) => (
-            /* mr-[0.25em] instead of a text space: trailing whitespace inside
-               an inline-block is trimmed, which jams the words together. */
-            <span key={i} data-word aria-hidden="true" className="mr-[0.25em] inline-block">
-              {word}
-            </span>
+        <Reveal stagger delay={0.05} className="mt-8 space-y-5">
+          {manifesto.paragraphs.map((p, i) => (
+            <p key={i} className="display text-pretty text-xl leading-relaxed text-bone sm:text-2xl">
+              {p}
+            </p>
           ))}
-        </p>
+        </Reveal>
+
+        <Reveal stagger delay={0.05} className="mt-8 space-y-6">
+          {manifesto.contrasts.map((c, i) => (
+            <div key={i}>
+              <p className="display text-xl leading-relaxed text-bone sm:text-2xl">{c.not}</p>
+              <p className="display mt-1 text-xl leading-relaxed text-gold sm:text-2xl">{c.but}</p>
+            </div>
+          ))}
+        </Reveal>
+
+        <Reveal delay={0.1} className="mt-8">
+          <p className="display text-pretty text-2xl italic leading-relaxed text-bone sm:text-3xl">
+            {renderSignature(manifesto.signature)}
+          </p>
+        </Reveal>
       </div>
     </section>
   );

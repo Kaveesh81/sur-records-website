@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { site, nav } from "@/lib/content";
 
 export default function Footer() {
@@ -27,22 +28,14 @@ export default function Footer() {
             <ul className="space-y-0.5">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     className="inline-flex min-h-11 items-center text-sm text-bone-muted transition-colors duration-[--dur-base] hover:text-bone"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
-              <li>
-                <a
-                  href="#apply"
-                  className="inline-flex min-h-11 items-center text-sm text-gold transition-colors duration-[--dur-base] hover:text-[#f0c75e]"
-                >
-                  Be part of the label
-                </a>
-              </li>
             </ul>
           </nav>
 

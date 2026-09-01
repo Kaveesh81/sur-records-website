@@ -268,6 +268,20 @@ body {
 }
 
 /* ==========================================================================
+   MUSIC PLAYER — vinyl disk
+   ========================================================================== */
+
+.player-disk {
+  animation: player-spin 8s linear infinite;
+}
+
+@keyframes player-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
    SCROLL-REVEAL FALLBACK
    Elements start hidden only when JS is available to bring them back.
    Without JS the `no-js` guard leaves all content visible and crawlable.
@@ -294,7 +308,8 @@ body {
   }
 
   .aurora,
-  .marquee-track {
+  .marquee-track,
+  .player-disk {
     animation: none !important;
   }
 

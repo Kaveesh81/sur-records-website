@@ -1,7 +1,8 @@
 # Sur Records
 
-Landing site for Sur Records — an independent record label. Built to showcase
-releases and convert visiting singers, composers and producers into applicants.
+Multi-page site for Sur Records — an independent record label. Six pages
+(Home, The Surilas, The Sur Sound, From the Studio, About, Contact) plus a
+persistent music player that keeps playing across page navigation.
 
 **Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · GSAP
 ScrollTrigger · Lenis · Resend
@@ -26,48 +27,72 @@ form needs `RESEND_API_KEY` to actually deliver.
 **Almost everything lives in one file: [`lib/content.ts`](lib/content.ts).**
 
 Open it and replace anything marked `// PLACEHOLDER`. You do not need to touch
-any component to change copy, releases, artists, stats or contact details.
+any component to change copy, releases, artists, videos or contact details.
 
-| What you want to change | Where in `lib/content.ts` |
-| --- | --- |
-| Email, phone, social links | `site` |
-| Hero headline and buttons | `hero` |
-| Scrolling word band | `ticker` |
-| The "Our sound" statement | `manifesto` |
-| Releases in the gallery | `releases` |
-| Artists on the roster | `roster` |
-| What the label offers | `offer` |
-| The four big numbers | `proof` |
-| Form heading and role options | `apply` |
+| What you want to change | Where in `lib/content.ts` | Shows up on |
+| --- | --- | --- |
+| Email, phone, social links | `site` | Footer, everywhere |
+| Nav labels/routes | `nav` | Header, footer |
+| Brand name/tagline, CTA links | `hero` | `/` |
+| The manifesto copy | `manifesto` | `/` |
+| Artists — song, age, language, handle | `surilas` | `/surilas` |
+| Releases — credits, streaming/YouTube links, audio | `releases` | `/sur-sound`, the player |
+| Behind-the-scenes videos | `studio` | `/studio` |
+| About + Founder's Message copy | `about` | `/about` |
+| Form heading and role options | `apply` | `/contact` |
 
 ### Currently placeholder — replace before you market the site
 
 - **All six releases** and **all four artists** are invented names.
-- **The four stats** (40+ tracks, 12 artists, 3M+ streams, 6 languages).
-- **All four social links** are `#`. Any link left as `#` renders as inert
-  text rather than a dead link, so nothing is broken until you fill them in —
-  but they should be filled in.
+- **`streaming` links and `youtubeUrl`** on every release are `#`. Any link
+  left as `#` renders as inert text rather than a dead link, so nothing is
+  broken until you fill them in — but they should be filled in.
+- **`audioSrc` is `null`** on every release. The music player is fully wired
+  up and interactive without it (disk spins, progress ticks, tracks switch),
+  it just has nothing to actually play — set `audioSrc` to a real file URL to
+  make a track audible.
+- **All studio videos have `videoUrl: null`** — placeholder cards until you
+  add real footage.
+- **All social links** are `#` (see above).
 - **Phone number** is `null`, which hides it from the footer entirely.
 
 ### Adding real images
 
 The site ships with **no image files** — every cover and artist portrait is
-generated from CSS gradients, so nothing is ever a broken image. To use real
-artwork:
+generated from CSS gradients in a narrow gold band, so nothing is ever a
+broken image. To use real artwork:
 
-- **Release cover:** put the file in `public/covers/`, then add
-  `cover: '/covers/antara.jpg'` to that release in `content.ts`.
-- **Artist photo:** put the file in `public/artists/`, then add
-  `photo: '/artists/meera.jpg'` to that artist.
+- **Release cover:** put the file in `public/covers/`, then set `cover:
+  '/covers/antara.jpg'` on that release in `content.ts` — used everywhere that
+  release appears, including the music player's disk.
+- **Artist photo:** put the file in `public/artists/`, then set `photo:
+  '/artists/meera.jpg'` on that artist in `surilas`.
+- **Hero logo:** set `hero.logoSrc` to a real logo file once you have one —
+  it replaces the generated devanagari + wordmark lockup on the homepage.
 
 Square images for covers, 3:4 portrait for artists. The generated art stays as
 the fallback for anything without a file.
 
 ---
 
+## The music player
+
+A persistent bottom bar, mounted once in `app/layout.tsx` via
+`lib/player-context.tsx`, so it keeps playing across page navigation — click a
+track on `/sur-sound` and it stays playing while you browse to `/about`. Its
+queue is read straight from `releases`, not a separate track list.
+
+It's fully interactive even with `audioSrc: null` on every release: play/pause,
+the spinning disk, and the progress bar all work off a simulated timer against
+each track's `duration`. Set a real `audioSrc` and it switches to driving an
+actual `<audio>` element instead — no other change needed.
+
+---
+
 ## Where form submissions go
 
-`Apply` form → `POST /api/apply` → validated → emailed to `APPLICATIONS_TO`.
+`Apply` form (rendered on `/contact`) → `POST /api/apply` → validated →
+emailed to `APPLICATIONS_TO`.
 
 The email's reply-to is set to the applicant, so hitting **Reply** in your inbox
 goes straight to the singer.
@@ -137,9 +162,10 @@ dependency:
 | Sparkles | canvas particle field in `Hero.tsx` |
 | Hero Parallax | scrub-driven `data-parallax` layers |
 
-Only **two** sections pin (Manifesto and Releases) — more than that starts
-fighting native scroll, and both drop their pin below 768px where pinning hurts
-touch scrolling most.
+The homepage Hero is the only section with bespoke pinned/scrubbed
+choreography; every other page (The Surilas, The Sur Sound, From the Studio,
+About) uses the shared `Reveal` component for entrance animation — simpler
+and consistent across six pages, without fighting native scroll on each one.
 
 **Everything is disabled under `prefers-reduced-motion`.** Content is fully
 visible and readable with animation off; scroll-revealed sections also stay
