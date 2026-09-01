@@ -131,8 +131,10 @@ export async function POST(request: Request) {
         ${row("Role", data.role)}
         ${row("Email", data.email, true)}
         ${row("Phone", data.phone)}
+        ${row("City", data.city)}
+        ${row("Country", data.country)}
         ${data.instagram ? row("Instagram", data.instagram) : ""}
-        ${data.link ? row("Music link", data.link, true) : ""}
+        ${(data.answers ?? []).map((a) => row(a.label, a.value, /^https?:\/\//.test(a.value))).join("")}
       </table>
 
       ${

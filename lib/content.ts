@@ -308,15 +308,314 @@ export const about = {
 
 /** The application form, now hosted on /contact. */
 export const apply = {
-  label: "Open call",
-  heading: "Be part of the label",
-  sub: "Send us your voice. We read every submission ourselves — no forms disappearing into an inbox nobody opens.",
-  roles: [
-    "Singer / Vocalist",
-    "Composer",
-    "Producer",
-    "Lyricist",
-    "Instrumentalist",
-    "Other",
-  ],
+  headingPrefix: "Be part of the",
+  sub: "Fill in your information below and get in touch with us. We read every submission ourselves. No forms disappearing into an inbox nobody opens.",
 };
+
+/**
+ * Role-specific follow-up fields on the Contact form. Each role is data —
+ * picking a role in the "What do you do?" select renders exactly the fields
+ * listed here, via `components/ApplyRoleFields.tsx`. Add/reorder/edit fields
+ * here; no component code needs to change.
+ *
+ * `showWhen` makes a field conditional on an earlier `yesno` field's answer
+ * (e.g. a different upload prompt depending on whether they have prior work).
+ * `allowOther` adds a free-text follow-up when "Other" is picked.
+ */
+export type FieldType =
+  | "select"
+  | "multiselect"
+  | "text"
+  | "textarea"
+  | "upload"
+  | "upload-or-link" // a file upload OR a pasted link — either satisfies `required`
+  | "yesno";
+
+export type RoleField = {
+  key: string;
+  type: FieldType;
+  label: string;
+  options?: readonly string[];
+  allowOther?: boolean;
+  accept?: string; // file input accept attribute — "upload" fields only
+  hint?: string;
+  showWhen?: { key: string; equals: string };
+  required?: boolean; // only meaningful once the field is visible (passes showWhen)
+  layout?: "pills" | "list"; // "multiselect" only — checkbox list vs. toggle pills
+};
+
+export type RoleConfig = {
+  id: string;
+  label: string;
+  fields: readonly RoleField[];
+};
+
+const LANGUAGES = ["English", "Hindi", "Marathi", "Punjabi", "Other"] as const;
+
+const GENRES = [
+  "Bollywood / Film",
+  "Indie / Alternative",
+  "Pop",
+  "Hip-Hop / Rap",
+  "Classical (Hindustani/Carnatic)",
+  "Devotional / Spiritual",
+  "Folk",
+  "Electronic / EDM",
+  "R&B / Soul",
+  "Rock",
+  "Other",
+] as const;
+
+const INSTRUMENTS = [
+  "Guitar",
+  "Piano / Keyboard",
+  "Drums",
+  "Bass",
+  "Violin",
+  "Tabla",
+  "Flute (Bansuri)",
+  "Sitar",
+  "Harmonium",
+  "Saxophone",
+  "Percussion",
+  "Other",
+] as const;
+
+const BUDGET_RANGES = [
+  "Under ₹50,000",
+  "₹50,000 – ₹2,00,000",
+  "₹2,00,000 – ₹5,00,000",
+  "₹5,00,000+",
+  "Prefer to discuss",
+] as const;
+
+const AUDIO_ACCEPT = "audio/mpeg,audio/wav,audio/x-wav,audio/mp4,.mp3,.wav";
+const AUDIO_VIDEO_ACCEPT = `${AUDIO_ACCEPT},video/mp4,.mp4`;
+const DOC_ACCEPT = "application/pdf,.pdf,.doc,.docx";
+const ANY_ACCEPT = `${AUDIO_VIDEO_ACCEPT},${DOC_ACCEPT},image/*`;
+
+export const applyRoles: RoleConfig[] = [
+  {
+    id: "singer",
+    label: "Singer",
+    fields: [
+      { key: "language", type: "select", label: "Language", options: LANGUAGES, allowOther: true, required: true },
+      { key: "genre", type: "multiselect", label: "Genre / Style", options: GENRES, allowOther: true },
+      { key: "hasPreviousWork", type: "yesno", label: "Do you have previous work you can share?" },
+      {
+        key: "previousWorkUpload",
+        type: "upload",
+        label: "Upload your previous work",
+        accept: AUDIO_ACCEPT,
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+      {
+        key: "singingDemo",
+        type: "upload-or-link",
+        label: "A short singing demo",
+        accept: "video/mp4,.mp4",
+        showWhen: { key: "hasPreviousWork", equals: "No" },
+        required: true,
+      },
+      { key: "streamingLinks", type: "text", label: "Streaming platform links", hint: "Optional — Spotify, Apple Music, etc." },
+    ],
+  },
+  {
+    id: "lyricist",
+    label: "Songwriter / Lyricist",
+    fields: [
+      { key: "language", type: "select", label: "Language", options: LANGUAGES, allowOther: true, required: true },
+      { key: "genre", type: "multiselect", label: "Genre / Style", options: GENRES, allowOther: true },
+      { key: "hasPreviousLyrics", type: "yesno", label: "Do you have previous lyrics you can share?" },
+      {
+        key: "lyricsUpload",
+        type: "upload",
+        label: "Upload your lyrics",
+        accept: DOC_ACCEPT,
+        showWhen: { key: "hasPreviousLyrics", equals: "Yes" },
+        required: true,
+      },
+    ],
+  },
+  {
+    id: "composer",
+    label: "Music Director / Composer",
+    fields: [
+      { key: "language", type: "select", label: "Language", options: LANGUAGES, allowOther: true, required: true },
+      { key: "genre", type: "multiselect", label: "Genre / Style", options: GENRES, allowOther: true },
+      { key: "hasPreviousWork", type: "yesno", label: "Do you have previous work you can share?" },
+      {
+        key: "previousWorkUpload",
+        type: "upload",
+        label: "Upload your previous work",
+        accept: AUDIO_ACCEPT,
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+      {
+        key: "musicDemo",
+        type: "upload-or-link",
+        label: "A music demo",
+        accept: AUDIO_ACCEPT,
+        showWhen: { key: "hasPreviousWork", equals: "No" },
+        required: true,
+      },
+      { key: "streamingLinks", type: "text", label: "Streaming platform links", hint: "Optional — Spotify, Apple Music, etc." },
+      {
+        key: "credits",
+        type: "textarea",
+        label: "Credits",
+        hint: "Productions, films, artists you've worked with",
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+      {
+        key: "creditsUpload",
+        type: "upload",
+        label: "Upload supporting document for your credits",
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+    ],
+  },
+  {
+    id: "musician",
+    label: "Musician",
+    fields: [
+      { key: "genre", type: "multiselect", label: "Genre / Style", options: GENRES, allowOther: true },
+      { key: "instruments", type: "multiselect", label: "Instruments", options: INSTRUMENTS, allowOther: true },
+      { key: "hasPreviousWork", type: "yesno", label: "Do you have previous work you can share?" },
+      {
+        key: "previousWorkUpload",
+        type: "upload",
+        label: "Upload your previous work",
+        accept: AUDIO_VIDEO_ACCEPT,
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+      {
+        key: "instrumentalDemo",
+        type: "upload-or-link",
+        label: "An instrumental demo",
+        accept: AUDIO_VIDEO_ACCEPT,
+        showWhen: { key: "hasPreviousWork", equals: "No" },
+        required: true,
+      },
+      {
+        key: "credits",
+        type: "textarea",
+        label: "Credits",
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+      {
+        key: "creditsUpload",
+        type: "upload",
+        label: "Upload supporting document for your credits",
+        showWhen: { key: "hasPreviousWork", equals: "Yes" },
+        required: true,
+      },
+    ],
+  },
+  {
+    id: "producer",
+    label: "Producer",
+    fields: [
+      { key: "companyName", type: "text", label: "Company name" },
+      { key: "releases", type: "textarea", label: "List your production releases" },
+      { key: "artistsWorkedWith", type: "textarea", label: "Artists worked with" },
+      { key: "streamingLinks", type: "text", label: "Streaming platform links", hint: "Optional" },
+      { key: "workUpload", type: "upload", label: "Upload your work", accept: AUDIO_VIDEO_ACCEPT },
+    ],
+  },
+  {
+    id: "visual-creative",
+    label: "Visual Creative",
+    fields: [
+      {
+        key: "disciplines",
+        type: "multiselect",
+        label: "Your discipline(s)",
+        options: [
+          "Director",
+          "Cinematographer",
+          "Editor",
+          "Photographer (BTS / Stills)",
+          "Creative Director",
+          "Designer / Costume",
+          "Hair & Makeup",
+          "Other",
+        ],
+        allowOther: true,
+        layout: "list",
+      },
+      { key: "portfolioUpload", type: "upload", label: "Portfolio / showreel document" },
+      { key: "notableWork", type: "textarea", label: "Notable work / credits" },
+      { key: "sampleUpload", type: "upload", label: "A sample reel or images", accept: `${AUDIO_VIDEO_ACCEPT},image/*` },
+    ],
+  },
+  {
+    id: "brand",
+    label: "Brand Collaborations",
+    fields: [
+      { key: "companyName", type: "text", label: "Company name" },
+      { key: "contactPerson", type: "text", label: "Contact person" },
+      { key: "brief", type: "textarea", label: "Project / brief" },
+      { key: "timeline", type: "text", label: "Timeline" },
+      { key: "aboutCompany", type: "textarea", label: "About the company" },
+      { key: "budgetRange", type: "select", label: "Budget range", options: BUDGET_RANGES },
+      { key: "attachment", type: "upload", label: "Attachment", hint: "Optional — brief, deck, etc.", accept: ANY_ACCEPT },
+    ],
+  },
+  {
+    id: "events",
+    label: "Events / Live Concerts",
+    fields: [
+      {
+        key: "categories",
+        type: "multiselect",
+        label: "What best describes this?",
+        options: ["Festival", "Venue", "Event Collaboration", "Live Partnership", "Other"],
+        allowOther: true,
+      },
+      { key: "organizationName", type: "text", label: "Organization name" },
+      { key: "location", type: "text", label: "Location" },
+      { key: "proposedDates", type: "text", label: "Proposed dates" },
+      { key: "details", type: "textarea", label: "Details" },
+    ],
+  },
+  {
+    id: "general",
+    label: "General Enquiry",
+    fields: [],
+  },
+  {
+    id: "sell-music",
+    label: "Sell / License Music",
+    fields: [
+      { key: "songTitle", type: "text", label: "Song / title name" },
+      { key: "artist", type: "text", label: "Artist" },
+      { key: "composer", type: "text", label: "Composer" },
+      { key: "lyricist", type: "text", label: "Lyricist" },
+      { key: "genre", type: "select", label: "Genre", options: GENRES, allowOther: true },
+      { key: "language", type: "select", label: "Language", options: LANGUAGES, allowOther: true, required: true },
+      {
+        key: "lookingFor",
+        type: "multiselect",
+        label: "What are you looking for?",
+        options: [
+          "Sell the music / catalogue",
+          "License the music",
+          "Release through Sur Records",
+          "Distribution",
+          "Publishing opportunity",
+          "Collaboration",
+          "Other",
+        ],
+        allowOther: true,
+      },
+      { key: "trackUpload", type: "upload", label: "Upload the track", hint: "Optional", accept: AUDIO_ACCEPT },
+    ],
+  },
+];

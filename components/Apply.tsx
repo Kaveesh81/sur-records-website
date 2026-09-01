@@ -2,9 +2,15 @@
 
 import { useRef, useState } from "react";
 import { Check, Loader2, AlertCircle, ArrowUpRight } from "lucide-react";
-import { apply, site } from "@/lib/content";
+import { apply, applyRoles, site } from "@/lib/content";
 import { applicationSchema, flattenErrors, type FieldErrors } from "@/lib/schema";
 import Reveal from "./Reveal";
+import ApplyRoleFields, {
+  buildRoleAnswers,
+  validateRoleFields,
+  type RoleAnswers,
+  type RoleFieldErrors,
+} from "./ApplyRoleFields";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -12,19 +18,35 @@ const EMPTY = {
   name: "",
   email: "",
   phone: "",
+  city: "",
+  country: "",
   role: "",
   instagram: "",
-  link: "",
   message: "",
   website: "", // honeypot
 };
 
 export default function Apply() {
   const [values, setValues] = useState(EMPTY);
+  const [roleAnswers, setRoleAnswers] = useState<RoleAnswers>({});
+  const [roleFieldErrors, setRoleFieldErrors] = useState<RoleFieldErrors>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [formError, setFormError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const setRoleAnswer = (key: string, value: string) => {
+    setRoleAnswers((a) => ({ ...a, [key]: value }));
+    if (roleFieldErrors[key]) setRoleFieldErrors((e) => ({ ...e, [key]: "" }));
+  };
+
+  const onRoleChange = (roleId: string) => {
+    set("role")(roleId);
+    // Different roles have different fields — stale answers from a
+    // previously-selected role should never leak into a new one.
+    setRoleAnswers({});
+    setRoleFieldErrors({});
+  };
 
   const set = (key: keyof typeof EMPTY) => (value: string) => {
     setValues((v) => ({ ...v, [key]: value }));
@@ -48,20 +70,29 @@ export default function Apply() {
     e.preventDefault();
     setFormError(null);
 
-    const result = applicationSchema.safeParse(values);
+    const roleErrors = validateRoleFields(values.role, roleAnswers);
+    const answers = buildRoleAnswers(values.role, roleAnswers);
+    const result = applicationSchema.safeParse({ ...values, answers });
 
-    if (!result.success) {
-      const fieldErrors = flattenErrors(result.error);
+    if (!result.success || Object.keys(roleErrors).length > 0) {
+      const fieldErrors = result.success ? {} : flattenErrors(result.error);
       setErrors(fieldErrors);
+      setRoleFieldErrors(roleErrors);
       setStatus("idle");
 
-      // Move focus to the first invalid field (WCAG: focus-management).
-      const firstKey = Object.keys(fieldErrors)[0];
-      if (firstKey) {
-        formRef.current
-          ?.querySelector<HTMLElement>(`[name="${firstKey}"]`)
-          ?.focus();
-      }
+      // Move focus to the first invalid field (WCAG: focus-management) —
+      // core fields have a matching `[name]`, role fields have a matching
+      // `#rolefield-<key>` wrapper (they're custom controls, not all of
+      // them native inputs with a `name`).
+      const firstCoreKey = Object.keys(fieldErrors)[0];
+      const firstRoleKey = Object.keys(roleErrors)[0];
+      const target = firstCoreKey
+        ? formRef.current?.querySelector<HTMLElement>(`[name="${firstCoreKey}"]`)
+        : firstRoleKey
+          ? document.getElementById(`rolefield-${firstRoleKey}`)
+          : null;
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+      target?.focus?.();
       return;
     }
 
@@ -87,6 +118,8 @@ export default function Apply() {
 
       setStatus("success");
       setValues(EMPTY);
+      setRoleAnswers({});
+      setRoleFieldErrors({});
       setErrors({});
     } catch {
       setStatus("error");
@@ -142,44 +175,13 @@ export default function Apply() {
       <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.85fr_1fr] lg:gap-20">
         {/* Pitch column */}
         <Reveal>
-          <p className="label-mono mb-5 flex items-center gap-3">
-            <span className="h-px w-8 bg-gold" />
-            {apply.label}
-          </p>
-
           <h2 className="display text-balance text-[clamp(2.25rem,6vw,4rem)]">
-            {apply.heading}
+            {apply.headingPrefix} <span className="font-deva text-gold">{site.nameDevanagari}</span>
           </h2>
 
           <p className="mt-6 max-w-md text-pretty leading-relaxed text-bone-muted">
             {apply.sub}
           </p>
-
-          <dl className="mt-10 space-y-5 border-t border-line pt-8">
-            <div>
-              <dt className="label-mono">Prefer email?</dt>
-              <dd className="mt-1.5">
-                <a
-                  href={`mailto:${site.email}`}
-                  className="group inline-flex min-h-11 items-center gap-1.5 text-bone transition-colors duration-[--dur-base] hover:text-gold"
-                >
-                  {site.email}
-                  <ArrowUpRight
-                    size={14}
-                    className="transition-transform duration-[--dur-base] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                </a>
-              </dd>
-            </div>
-
-            <div>
-              <dt className="label-mono">What helps most</dt>
-              <dd className="mt-1.5 text-sm leading-relaxed text-bone-muted">
-                One link to something you have actually recorded. A voice note
-                counts. Polish is not the point — the voice is.
-              </dd>
-            </div>
-          </dl>
         </Reveal>
 
         {/* Form column */}
@@ -230,6 +232,32 @@ export default function Apply() {
               />
             </div>
 
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field
+                label="City"
+                name="city"
+                required
+                value={values.city}
+                onChange={set("city")}
+                onBlur={validateField("city")}
+                error={errors.city}
+                autoComplete="address-level2"
+                placeholder="Mumbai"
+              />
+
+              <Field
+                label="Country"
+                name="country"
+                required
+                value={values.country}
+                onChange={set("country")}
+                onBlur={validateField("country")}
+                error={errors.country}
+                autoComplete="country-name"
+                placeholder="India"
+              />
+            </div>
+
             {/* Role */}
             <div>
               <label htmlFor="role" className="mb-2 block text-sm font-medium text-bone">
@@ -241,7 +269,7 @@ export default function Apply() {
                 name="role"
                 required
                 value={values.role}
-                onChange={(e) => set("role")(e.target.value)}
+                onChange={(e) => onRoleChange(e.target.value)}
                 onBlur={validateField("role")}
                 aria-invalid={!!errors.role}
                 aria-describedby={errors.role ? "role-error" : undefined}
@@ -258,9 +286,9 @@ export default function Apply() {
                 <option value="" disabled>
                   Select one
                 </option>
-                {apply.roles.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
+                {applyRoles.map((r) => (
+                  <option key={r.id} value={r.label}>
+                    {r.label}
                   </option>
                 ))}
               </select>
@@ -268,30 +296,25 @@ export default function Apply() {
               {errors.role && <FieldError id="role-error">{errors.role}</FieldError>}
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field
-                label="Instagram"
-                name="instagram"
-                value={values.instagram}
-                onChange={set("instagram")}
-                onBlur={validateField("instagram")}
-                error={errors.instagram}
-                placeholder="@yourhandle"
-                hint="Optional"
+            {values.role && (
+              <ApplyRoleFields
+                roleId={values.role}
+                values={roleAnswers}
+                errors={roleFieldErrors}
+                onChange={setRoleAnswer}
               />
+            )}
 
-              <Field
-                label="Link to your music"
-                name="link"
-                value={values.link}
-                onChange={set("link")}
-                onBlur={validateField("link")}
-                error={errors.link}
-                inputMode="url"
-                placeholder="YouTube, Spotify, Drive…"
-                hint="Optional"
-              />
-            </div>
+            <Field
+              label="Instagram"
+              name="instagram"
+              required
+              value={values.instagram}
+              onChange={set("instagram")}
+              onBlur={validateField("instagram")}
+              error={errors.instagram}
+              placeholder="@yourhandle"
+            />
 
             {/* Message */}
             <div>

@@ -116,6 +116,31 @@ and a 5-per-10-minutes-per-IP rate limit.
 
 ---
 
+## Role-specific fields & file uploads
+
+Picking a role in "What do you do?" on `/contact` reveals its own follow-up
+questions — language, genre, credits, portfolio links, and in several cases a
+real file upload. All of it is data: `applyRoles` in
+[`lib/content.ts`](lib/content.ts) is the full list of roles and their
+fields. Add, remove, or reorder fields there — `components/ApplyRoleFields.tsx`
+just interprets whatever it finds, so no component code needs to change.
+
+**File uploads** go straight from the visitor's browser to Vercel Blob
+storage (never through this app's server), so large audio/video demos never
+hit a request-size limit. The emailed application gets a link to the file,
+not the file itself.
+
+**Setup:**
+
+1. In the Vercel dashboard: **Storage → Blob → Connect to project.**
+2. Copy the token it gives you into `.env.local` as `BLOB_READ_WRITE_TOKEN`.
+
+Until this is set, every other part of the form still works — uploads just
+show "Could not upload that file. You can still submit without it." and
+submission proceeds without them.
+
+---
+
 ## Deploying to Vercel
 
 ```bash

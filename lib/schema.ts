@@ -27,21 +27,33 @@ export const applicationSchema = z.object({
     .max(25, "That phone number is too long.")
     .regex(/^[+\d][\d\s()\-.]*$/, "Use digits, spaces, or + ( ) - only."),
 
+  city: z.string().trim().min(1, "Please tell us your city.").max(80, "That is too long."),
+
+  country: z.string().trim().min(1, "Please tell us your country.").max(80, "That is too long."),
+
   role: z.string().trim().min(1, "Please tell us what you do."),
 
   instagram: z
     .string()
     .trim()
-    .max(120, "That handle is too long.")
-    .optional()
-    .or(z.literal("")),
+    .min(1, "Please share your Instagram handle.")
+    .max(120, "That handle is too long."),
 
-  link: z
-    .string()
-    .trim()
-    .max(300, "That link is too long.")
-    .optional()
-    .or(z.literal("")),
+  /**
+   * Role-specific follow-up answers (see `applyRoles` in lib/content.ts).
+   * The client flattens each field to a {label, value} pair — multiselect
+   * values get comma-joined — so this route never needs to know the
+   * per-role field schema; editing `applyRoles` needs no backend change.
+   */
+  answers: z
+    .array(
+      z.object({
+        label: z.string().trim().max(120),
+        value: z.string().trim().max(2000),
+      })
+    )
+    .max(40, "That is more detail than we can take in one go.")
+    .optional(),
 
   message: z
     .string()
