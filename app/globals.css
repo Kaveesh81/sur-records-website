@@ -292,6 +292,54 @@ body {
 }
 
 /* ==========================================================================
+   GOLD GLOW BOX — Sur Access
+   A slow-breathing gold halo around a bordered panel, reserved for the
+   membership page (and its nav link) so it reads as its own, more
+   rarefied space.
+   ========================================================================== */
+
+.gold-glow-box {
+  animation: gold-pulse 5s ease-in-out infinite;
+}
+
+@keyframes gold-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.14),
+      0 0 60px -12px rgba(212, 175, 55, 0.45),
+      0 0 130px -30px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.22),
+      0 0 80px -10px rgba(212, 175, 55, 0.6),
+      0 0 150px -25px rgba(212, 175, 55, 0.4);
+  }
+}
+
+/* Same idea, scaled down for a small nav pill rather than a full panel. */
+.gold-glow-pill {
+  animation: gold-pulse-pill 5s ease-in-out infinite;
+}
+
+@keyframes gold-pulse-pill {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.25),
+      0 0 12px -2px rgba(212, 175, 55, 0.55),
+      0 0 24px -6px rgba(212, 175, 55, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.4),
+      0 0 18px 0px rgba(212, 175, 55, 0.75),
+      0 0 32px -4px rgba(212, 175, 55, 0.5);
+  }
+}
+
+/* ==========================================================================
    REDUCED MOTION
    Kill every ambient loop and reveal. Content must be fully readable and
    fully visible the instant the page loads.

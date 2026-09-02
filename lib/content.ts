@@ -35,6 +35,7 @@ export const nav = [
   { label: "From the Studio", href: "/studio" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
+  { label: "Sur Access", href: "/sur-access" },
 ] as const;
 
 /**
@@ -436,6 +437,14 @@ export const applyRoles: RoleConfig[] = [
         showWhen: { key: "hasPreviousLyrics", equals: "Yes" },
         required: true,
       },
+      {
+        key: "lyricsDemo",
+        type: "upload",
+        label: "Lyrics demo — upload your work",
+        accept: DOC_ACCEPT,
+        showWhen: { key: "hasPreviousLyrics", equals: "No" },
+        required: true,
+      },
     ],
   },
   {
@@ -522,11 +531,11 @@ export const applyRoles: RoleConfig[] = [
     id: "producer",
     label: "Producer",
     fields: [
-      { key: "companyName", type: "text", label: "Company name" },
-      { key: "releases", type: "textarea", label: "List your production releases" },
-      { key: "artistsWorkedWith", type: "textarea", label: "Artists worked with" },
-      { key: "streamingLinks", type: "text", label: "Streaming platform links", hint: "Optional" },
-      { key: "workUpload", type: "upload", label: "Upload your work", accept: AUDIO_VIDEO_ACCEPT },
+      { key: "companyName", type: "text", label: "Company name", required: true },
+      { key: "releases", type: "textarea", label: "List your production releases", required: true },
+      { key: "artistsWorkedWith", type: "textarea", label: "Artists worked with", required: true },
+      { key: "streamingLinks", type: "text", label: "Streaming platform links", required: true },
+      { key: "workUpload", type: "upload", label: "Upload your work", accept: AUDIO_VIDEO_ACCEPT, required: true },
     ],
   },
   {
@@ -549,23 +558,30 @@ export const applyRoles: RoleConfig[] = [
         ],
         allowOther: true,
         layout: "list",
+        required: true,
       },
-      { key: "portfolioUpload", type: "upload", label: "Portfolio / showreel document" },
-      { key: "notableWork", type: "textarea", label: "Notable work / credits" },
-      { key: "sampleUpload", type: "upload", label: "A sample reel or images", accept: `${AUDIO_VIDEO_ACCEPT},image/*` },
+      { key: "portfolioUpload", type: "upload", label: "Portfolio / showreel document", required: true },
+      { key: "notableWork", type: "textarea", label: "Notable work / credits", required: true },
+      {
+        key: "sampleUpload",
+        type: "upload",
+        label: "A sample reel or images",
+        accept: `${AUDIO_VIDEO_ACCEPT},image/*`,
+        required: true,
+      },
     ],
   },
   {
     id: "brand",
     label: "Brand Collaborations",
     fields: [
-      { key: "companyName", type: "text", label: "Company name" },
-      { key: "contactPerson", type: "text", label: "Contact person" },
-      { key: "brief", type: "textarea", label: "Project / brief" },
-      { key: "timeline", type: "text", label: "Timeline" },
-      { key: "aboutCompany", type: "textarea", label: "About the company" },
-      { key: "budgetRange", type: "select", label: "Budget range", options: BUDGET_RANGES },
-      { key: "attachment", type: "upload", label: "Attachment", hint: "Optional — brief, deck, etc.", accept: ANY_ACCEPT },
+      { key: "companyName", type: "text", label: "Company name", required: true },
+      { key: "contactPerson", type: "text", label: "Contact person", required: true },
+      { key: "brief", type: "textarea", label: "Project / brief", required: true },
+      { key: "timeline", type: "text", label: "Timeline", required: true },
+      { key: "aboutCompany", type: "textarea", label: "About the company", required: true },
+      { key: "budgetRange", type: "select", label: "Budget range", options: BUDGET_RANGES, required: true },
+      { key: "attachment", type: "upload", label: "Attachment", accept: ANY_ACCEPT, required: true },
     ],
   },
   {
@@ -578,11 +594,12 @@ export const applyRoles: RoleConfig[] = [
         label: "What best describes this?",
         options: ["Festival", "Venue", "Event Collaboration", "Live Partnership", "Other"],
         allowOther: true,
+        required: true,
       },
-      { key: "organizationName", type: "text", label: "Organization name" },
-      { key: "location", type: "text", label: "Location" },
-      { key: "proposedDates", type: "text", label: "Proposed dates" },
-      { key: "details", type: "textarea", label: "Details" },
+      { key: "organizationName", type: "text", label: "Organization name", required: true },
+      { key: "location", type: "text", label: "Location", required: true },
+      { key: "proposedDates", type: "text", label: "Proposed dates", required: true },
+      { key: "details", type: "textarea", label: "Details", required: true },
     ],
   },
   {
@@ -594,11 +611,11 @@ export const applyRoles: RoleConfig[] = [
     id: "sell-music",
     label: "Sell / License Music",
     fields: [
-      { key: "songTitle", type: "text", label: "Song / title name" },
-      { key: "artist", type: "text", label: "Artist" },
-      { key: "composer", type: "text", label: "Composer" },
-      { key: "lyricist", type: "text", label: "Lyricist" },
-      { key: "genre", type: "select", label: "Genre", options: GENRES, allowOther: true },
+      { key: "songTitle", type: "text", label: "Song / title name", required: true },
+      { key: "artist", type: "text", label: "Artist", required: true },
+      { key: "composer", type: "text", label: "Composer", required: true },
+      { key: "lyricist", type: "text", label: "Lyricist", required: true },
+      { key: "genre", type: "select", label: "Genre", options: GENRES, allowOther: true, required: true },
       { key: "language", type: "select", label: "Language", options: LANGUAGES, allowOther: true, required: true },
       {
         key: "lookingFor",
@@ -614,8 +631,44 @@ export const applyRoles: RoleConfig[] = [
           "Other",
         ],
         allowOther: true,
+        required: true,
       },
-      { key: "trackUpload", type: "upload", label: "Upload the track", hint: "Optional", accept: AUDIO_ACCEPT },
+      { key: "trackUpload", type: "upload", label: "Upload the track", accept: AUDIO_ACCEPT, required: true },
     ],
   },
 ];
+
+/**
+ * Sur Access — the paid membership. `plans` drives both the pricing cards
+ * and the Razorpay order amount server-side (see app/api/razorpay/) — the
+ * server always looks the amount up here by `id`, it never trusts a client-
+ * supplied amount.
+ */
+export type SurAccessPlan = {
+  id: string;
+  label: string;
+  amount: number; // INR rupees, NOT paise
+  interval: string;
+};
+
+export const surAccess = {
+  eyebrow: "Members Only",
+  heading: "The label, from the inside.",
+  description:
+    "A closer seat to everything Sur Records makes — the unreleased, the unseen, and the not-yet-announced, before anyone else gets it.",
+  benefits: [
+    "Exclusive release listening parties",
+    "First access to selected unreleased music",
+    "Private artist sessions",
+    "Priority access to selected events",
+    "Exclusive BTS content",
+    "Private artist / studio content",
+    "Potential future invite-only events",
+  ],
+  // PLACEHOLDER — pricing isn't finalized yet. Edit these two amounts (in
+  // rupees) once you've decided; nothing else in the checkout needs to change.
+  plans: [
+    { id: "monthly", label: "Monthly", amount: 499, interval: "month" },
+    { id: "yearly", label: "Yearly", amount: 4999, interval: "year" },
+  ] as SurAccessPlan[],
+};

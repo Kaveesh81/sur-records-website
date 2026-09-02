@@ -48,15 +48,25 @@ export default function Nav() {
           {/* Right side: desktop links + mobile menu toggle. */}
           <div className="flex items-center gap-8">
             <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm text-bone-muted transition-colors duration-[--dur-base] hover:text-gold"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {nav.map((item) =>
+                item.href === "/sur-access" ? (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="gold-glow-pill rounded-full border border-gold/40 px-4 py-1.5 text-sm text-gold transition-colors duration-[--dur-base] hover:text-gold-bright"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-sm text-bone-muted transition-colors duration-[--dur-base] hover:text-gold"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
             </nav>
 
             <button
@@ -83,16 +93,27 @@ export default function Nav() {
           className="flex h-full flex-col items-center justify-center gap-2"
           aria-label="Mobile"
         >
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="display flex min-h-14 items-center px-6 text-4xl text-bone transition-colors duration-[--dur-base] hover:text-gold"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((item) =>
+            item.href === "/sur-access" ? (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="gold-glow-pill display mt-2 flex min-h-14 items-center rounded-full border border-gold/40 px-8 text-4xl text-gold transition-colors duration-[--dur-base] hover:text-gold-bright"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="display flex min-h-14 items-center px-6 text-4xl text-bone transition-colors duration-[--dur-base] hover:text-gold"
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
       </div>
     </>

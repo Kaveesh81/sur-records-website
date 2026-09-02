@@ -141,6 +141,51 @@ submission proceeds without them.
 
 ---
 
+## Sur Access membership checkout
+
+`/sur-access` is a paid membership with a real Razorpay checkout — pricing,
+copy, and the two plans (monthly/yearly) all live in `surAccess` in
+[`lib/content.ts`](lib/content.ts). The amounts there are **placeholder
+pricing** — edit them once you've decided; nothing else needs to change.
+
+**How it works:** the client only ever sends a plan *id* to
+`/api/razorpay/create-order`, which looks the real amount up server-side —
+so a tampered request can't pay less than the actual price. After payment,
+Razorpay's client callback is verified again server-side in
+`/api/razorpay/verify` (recomputing the HMAC signature with your secret key)
+before it's treated as real. Only then does an email go out to
+`APPLICATIONS_TO`, via the same Resend setup as the application form.
+
+**These are one-time payments per period, not auto-renewing subscriptions.**
+A "yearly" purchase doesn't automatically re-charge next year — the member
+would come back and pay again. Real recurring billing is a bigger project
+(Razorpay Plans + webhook handling) that can be added later if it's worth
+it.
+
+**Important — there's no login system on this site.** A successful payment
+doesn't unlock anything automatically; nothing here is currently gated. What
+actually happens is: a secure, verified payment, and an email telling you
+who joined and on which plan — you follow up with them directly (private
+group, mailing list, etc.), the same spirit as the application form.
+
+**Setup:**
+
+1. Sign up free at [razorpay.com](https://razorpay.com) — TEST mode keys
+   work immediately with no KYC.
+2. Dashboard → **Settings → API Keys** → generate a **Test** key.
+3. Put them in `.env.local` as `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`.
+4. Test the flow with [Razorpay's documented test card/UPI
+   credentials](https://razorpay.com/docs/payments/payments/test-card-upi-details/)
+   — no real money moves in test mode.
+5. When you're ready to accept real payments: complete Razorpay's KYC,
+   switch to **Live** keys, and swap them into your production environment
+   variables (same two names).
+
+Until `RAZORPAY_KEY_ID`/`RAZORPAY_KEY_SECRET` are set, clicking "Join" shows
+a clear "checkout is not configured yet" error rather than failing silently.
+
+---
+
 ## Deploying to Vercel
 
 ```bash
