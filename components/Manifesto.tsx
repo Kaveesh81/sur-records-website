@@ -26,8 +26,7 @@ export default function Manifesto() {
     <section id="manifesto" className="relative px-6 py-28 md:py-36">
       <div className="mx-auto max-w-3xl rounded-[2rem] border border-gold/40 bg-gold/[0.04] px-6 py-12 text-center sm:px-14 sm:py-16">
         <Reveal>
-          <p className="label-mono mb-8 flex items-center justify-center gap-3 !text-[clamp(1.75rem,5vw,3.25rem)]">
-            <span className="h-px w-10 bg-gold" />
+          <p className="label-mono mb-8 text-center !text-[clamp(1.75rem,5vw,3.25rem)]">
             {manifesto.label}
           </p>
           <p className="display text-pretty text-xl leading-relaxed text-bone sm:text-2xl">

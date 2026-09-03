@@ -22,7 +22,10 @@ export const site = {
   // Any entry left as '#' is rendered as non-clickable so the site never
   // ships a dead link.
   socials: [
-    { label: "Instagram", href: "#" },
+    {
+      label: "Instagram",
+      href: "https://www.instagram.com/surrecordsofficial?igsi=MTZmajBrOW41aHdhbg%3D%3D&utm_source=qr",
+    },
     { label: "YouTube", href: "#" },
     { label: "Spotify", href: "#" },
     { label: "Apple Music", href: "#" },
